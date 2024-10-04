@@ -15,12 +15,13 @@ import {
     FilterComparator,
     FilterOperator,
     FilterSuffix,
-    OperatorSymbolToFunction,
     isOperator,
     isSuffix,
+    OperatorSymbolToFunction,
     parseFilterToken,
 } from './filter'
-import { PaginateConfig, Paginated, PaginationLimit, paginate } from './paginate'
+import { paginate, PaginateConfig, Paginated, PaginationLimit } from './paginate'
+import 'dotenv/config'
 
 const isoStringToDate = (isoString) => new Date(isoString)
 
@@ -651,6 +652,22 @@ describe('paginate', () => {
             ['color', 'DESC'],
             ['name', 'ASC'],
         ])
+        expect(result.data).toStrictEqual([cats[3], cats[4], cats[1], cats[0], cats[2]])
+    })
+
+    it('should sort result by virtual columns', async () => {
+        const config: PaginateConfig<CatEntity> = {
+            sortableColumns: ['home.countCat'],
+            relations: ['home'],
+        }
+        const query: PaginateQuery = {
+            path: '',
+            sortBy: [['home.countCat', 'DESC']],
+        }
+
+        const result = await paginate<CatEntity>(query, catRepo, config)
+
+        expect(result.meta.sortBy).toStrictEqual([['home.countCat', 'DESC']])
         expect(result.data).toStrictEqual([cats[3], cats[4], cats[1], cats[0], cats[2]])
     })
 
