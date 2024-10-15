@@ -238,14 +238,14 @@ export function parseFilterToken(raw?: string): FilterToken | null {
 
 function fixFilterValue(value: string) {
     if (isISODate(value)) {
-        return new Date(value);
+        return new Date(value)
     }
 
     if (!Number.isNaN(value) && /^\d+$/.test(value)) {
-        return Number(value);
+        return Number(value)
     }
 
-    return value;
+    return value
 }
 
 export function parseFilter(
